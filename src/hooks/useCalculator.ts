@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import type { ProductInfo } from "@/components/calculator/CalculatorForm";
@@ -22,8 +21,9 @@ export const useCalculator = () => {
       return;
     }
 
-    const sellPrice = Number(productInfo.sellPrice);
-    const cost = Number(productInfo.cost);
+    const sellPrice = Number(productInfo.sellPrice.toString().replace(",", "."));
+    const cost = Number(productInfo.cost.toString().replace(",", "."));
+    const weight = productInfo.weight ? Number(productInfo.weight.toString().replace(",", ".")) : 0;
     
     const selectedCategory = amazonCategories.find(
       (cat) => cat.id === productInfo.category

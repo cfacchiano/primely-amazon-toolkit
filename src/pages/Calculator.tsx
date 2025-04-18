@@ -35,13 +35,16 @@ export default function CalculatorPage() {
       ["sellPrice", "cost", "weight", "length", "width", "height", "fbaStorageFee", "fbmShippingCost"].includes(name) &&
       value !== ""
     ) {
-      const numValue = parseFloat(value.replace(",", "."));
-      if (isNaN(numValue)) return;
+      // Replace comma with dot for decimal values
+      const normalizedValue = value.replace(",", ".");
+      const numValue = parseFloat(normalizedValue);
       
-      setProductInfo({
-        ...productInfo,
-        [name]: numValue,
-      });
+      if (!isNaN(numValue)) {
+        setProductInfo({
+          ...productInfo,
+          [name]: value, // Keep the original value with comma for display
+        });
+      }
     } else {
       setProductInfo({
         ...productInfo,

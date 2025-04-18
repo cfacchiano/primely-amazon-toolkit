@@ -124,11 +124,11 @@ export function CalculatorForm({
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="weight">Peso (kg)</Label>
+                <Label htmlFor="weight">Peso (g)</Label>
                 <Input
                   id="weight"
                   name="weight"
-                  placeholder="Ex: 0,3"
+                  placeholder="Ex: 300"
                   value={productInfo.weight}
                   onChange={onInputChange}
                 />
