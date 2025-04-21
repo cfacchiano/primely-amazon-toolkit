@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { ProductInfo } from "@/components/calculator/CalculatorForm";
 import type { CalculationResult } from "@/components/calculator/calculator-data";
 import { amazonCategories } from "@/components/calculator/calculator-data";
+import { storageFeePerCubicMeter, getFbaLogisticsFee } from "@/components/calculator/fba-fees";
 
 export const useCalculator = () => {
   const { toast } = useToast();
@@ -26,15 +27,15 @@ export const useCalculator = () => {
     const cost = Number(productInfo.cost.toString().replace(",", "."));
     const otherCosts = productInfo.otherCosts ? Number(productInfo.otherCosts.toString().replace(",", ".")) : 0;
     
-    // Convert weight from grams to kg
+    // Converte peso de gramas para kg
     const weightInKg = productInfo.weight ? Number(productInfo.weight.toString().replace(",", ".")) / 1000 : 0;
     
-    // Parse dimensions and calculate volume in cubic meters
+    // Calcula dimensões e volume em metros cúbicos
     const length = productInfo.length ? Number(productInfo.length.toString().replace(",", ".")) : 0;
     const width = productInfo.width ? Number(productInfo.width.toString().replace(",", ".")) : 0;
     const height = productInfo.height ? Number(productInfo.height.toString().replace(",", ".")) : 0;
     
-    // Convert from cm³ to m³ (divide by 1,000,000)
+    // Converte cm³ para m³ (divide por 1,000,000)
     const volumeInCubicMeters = (length * width * height) / 1000000;
     
     const selectedCategory = amazonCategories.find(
@@ -43,15 +44,17 @@ export const useCalculator = () => {
 
     const referralFee = selectedCategory ? selectedCategory.referralFee : 0.15;
     
-    // Calculate FBA fees
+    // Calcula taxas FBA
     const fbaReferralFee = sellPrice * referralFee;
-    const fbaStorageFee = productInfo.fbaStorageFee ? Number(productInfo.fbaStorageFee.toString().replace(",", ".")) : 5.0;
-    const fbaTotalCost = cost + otherCosts + fbaReferralFee + fbaStorageFee;
+    const fbaStorageFee = volumeInCubicMeters * storageFeePerCubicMeter; // Taxa de armazenamento mensal
+    const fbaLogisticsFee = getFbaLogisticsFee(weightInKg); // Taxa de logística baseada no peso
+    const fbaTotalFees = fbaReferralFee + fbaStorageFee + fbaLogisticsFee;
+    const fbaTotalCost = cost + otherCosts + fbaTotalFees;
     const fbaProfit = sellPrice - fbaTotalCost;
     const fbaMargin = (fbaProfit / sellPrice) * 100;
     const fbaRoi = (fbaProfit / cost) * 100;
 
-    // Calculate FBM fees
+    // Calcula taxas FBM (mantém o mesmo cálculo)
     const fbmReferralFee = sellPrice * referralFee;
     const fbmShippingCost = productInfo.fbmShippingCost ? Number(productInfo.fbmShippingCost.toString().replace(",", ".")) : 12.0;
     const fbmTotalCost = cost + otherCosts + fbmReferralFee + fbmShippingCost;
@@ -72,6 +75,8 @@ export const useCalculator = () => {
       fbmMargin,
       fbaRoi,
       fbmRoi,
+      fbaStorageFee, // Nova propriedade
+      fbaLogisticsFee, // Nova propriedade
       productDimensions: {
         length,
         width,

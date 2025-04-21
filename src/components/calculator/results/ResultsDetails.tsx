@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CalculationResult } from "../calculator-data";
 import type { ProductInfo } from "../CalculatorForm";
@@ -76,9 +75,19 @@ export function ResultsDetails({ result, productInfo }: ResultsDetailsProps) {
                 <span>R$ {formatNumber(result.fbaReferralFee)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Taxa FBA</span>
-                <span>R$ {formatNumber(productInfo.fbaStorageFee ? Number(productInfo.fbaStorageFee) : 5.0)}</span>
+                <span className="text-muted-foreground">Taxa de Armazenamento FBA</span>
+                <span>R$ {formatNumber(result.fbaStorageFee)}</span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Taxa de Logística FBA</span>
+                <span>R$ {formatNumber(result.fbaLogisticsFee)}</span>
+              </div>
+              {otherCosts > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Outros Custos</span>
+                  <span>R$ {formatNumber(otherCosts)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm border-t pt-2">
                 <span className="font-medium">Custo Total</span>
                 <span className="font-medium">R$ {formatNumber(result.fbaCost)}</span>

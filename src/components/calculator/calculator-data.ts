@@ -49,6 +49,8 @@ export type CalculationResult = {
   fbmMargin: number;
   fbaRoi: number;
   fbmRoi: number;
+  fbaStorageFee: number; // Nova propriedade
+  fbaLogisticsFee: number; // Nova propriedade
   productDimensions?: {
     length: number;
     width: number;
