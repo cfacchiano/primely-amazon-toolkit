@@ -32,17 +32,16 @@ export default function CalculatorPage() {
     const { name, value } = e.target;
     
     if (
-      ["sellPrice", "cost", "weight", "length", "width", "height", "fbaStorageFee", "fbmShippingCost"].includes(name) &&
-      value !== ""
+      ["sellPrice", "cost", "weight", "length", "width", "height", "fbaStorageFee", "fbmShippingCost"].includes(name)
     ) {
-      // Replace comma with dot for decimal values
-      const normalizedValue = value.replace(",", ".");
-      const numValue = parseFloat(normalizedValue);
+      // Accept decimal input in Brazilian format (using comma)
+      // Allow input like "0,01" or "15,54"
+      const validFormat = /^$|^\d*$|^\d*,\d*$/.test(value);
       
-      if (!isNaN(numValue)) {
+      if (validFormat) {
         setProductInfo({
           ...productInfo,
-          [name]: value, // Keep the original value with comma for display
+          [name]: value,
         });
       }
     } else {
