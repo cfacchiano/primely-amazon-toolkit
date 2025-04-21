@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -20,6 +19,7 @@ export default function CalculatorPage() {
     category: "electronics",
     sellPrice: "",
     cost: "",
+    otherCosts: "",
     weight: "",
     length: "",
     width: "",
@@ -66,6 +66,7 @@ export default function CalculatorPage() {
       category: "electronics",
       sellPrice: "",
       cost: "",
+      otherCosts: "",
       weight: "",
       length: "",
       width: "",

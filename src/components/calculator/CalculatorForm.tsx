@@ -16,6 +16,7 @@ export type ProductInfo = {
   category: string;
   sellPrice: string | number;
   cost: string | number;
+  otherCosts: string | number;
   weight: string | number;
   length: string | number;
   width: string | number;
@@ -87,9 +88,6 @@ export function CalculatorForm({
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              A categoria afeta as taxas de referência da Amazon.
-            </p>
           </div>
 
           <div className="space-y-2">
@@ -118,10 +116,23 @@ export function CalculatorForm({
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="otherCosts">
+              Outros Custos (R$)
+            </Label>
+            <Input
+              id="otherCosts"
+              name="otherCosts"
+              placeholder="Ex: 5,00"
+              value={productInfo.otherCosts}
+              onChange={onInputChange}
+            />
+          </div>
+
           <div className="pt-4 border-t">
             <p className="text-sm font-medium mb-2 flex items-center">
               <Info size={14} className="mr-1 text-muted-foreground" />
-              Dimensões do Produto (opcional)
+              Dimensões do Produto
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">

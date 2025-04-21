@@ -24,7 +24,10 @@ export const useCalculator = () => {
 
     const sellPrice = Number(productInfo.sellPrice.toString().replace(",", "."));
     const cost = Number(productInfo.cost.toString().replace(",", "."));
-    const weight = productInfo.weight ? Number(productInfo.weight.toString().replace(",", ".")) : 0;
+    const otherCosts = productInfo.otherCosts ? Number(productInfo.otherCosts.toString().replace(",", ".")) : 0;
+    
+    // Convert weight from grams to kg
+    const weightInKg = productInfo.weight ? Number(productInfo.weight.toString().replace(",", ".")) / 1000 : 0;
     
     // Parse dimensions and calculate volume in cubic meters
     const length = productInfo.length ? Number(productInfo.length.toString().replace(",", ".")) : 0;
@@ -38,41 +41,43 @@ export const useCalculator = () => {
       (cat) => cat.id === productInfo.category
     );
 
-    const referralFee = selectedCategory ? selectedCategory.referralFee : 0.13;
+    const referralFee = selectedCategory ? selectedCategory.referralFee : 0.15;
     
+    // Calculate FBA fees
     const fbaReferralFee = sellPrice * referralFee;
     const fbaStorageFee = productInfo.fbaStorageFee ? Number(productInfo.fbaStorageFee.toString().replace(",", ".")) : 5.0;
-    const fbaCost = cost + fbaReferralFee + fbaStorageFee;
-    const fbaProfit = sellPrice - fbaCost;
+    const fbaTotalCost = cost + otherCosts + fbaReferralFee + fbaStorageFee;
+    const fbaProfit = sellPrice - fbaTotalCost;
     const fbaMargin = (fbaProfit / sellPrice) * 100;
     const fbaRoi = (fbaProfit / cost) * 100;
 
+    // Calculate FBM fees
     const fbmReferralFee = sellPrice * referralFee;
     const fbmShippingCost = productInfo.fbmShippingCost ? Number(productInfo.fbmShippingCost.toString().replace(",", ".")) : 12.0;
-    const fbmCost = cost + fbmReferralFee + fbmShippingCost;
-    const fbmProfit = sellPrice - fbmCost;
+    const fbmTotalCost = cost + otherCosts + fbmReferralFee + fbmShippingCost;
+    const fbmProfit = sellPrice - fbmTotalCost;
     const fbmMargin = (fbmProfit / sellPrice) * 100;
     const fbmRoi = (fbmProfit / cost) * 100;
 
-    const calculationResult = {
+    const calculationResult: CalculationResult = {
       fbaSellPrice: sellPrice,
       fbmSellPrice: sellPrice,
       fbaReferralFee,
       fbmReferralFee,
-      fbaCost,
-      fbmCost,
+      fbaCost: fbaTotalCost,
+      fbmCost: fbmTotalCost,
       fbaProfit,
       fbmProfit,
       fbaMargin,
       fbmMargin,
       fbaRoi,
       fbmRoi,
-      // Add product dimensions and volume
       productDimensions: {
         length,
         width,
         height,
-        volumeInCubicMeters
+        volumeInCubicMeters,
+        weightInKg
       }
     };
 
