@@ -1,10 +1,12 @@
+
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Save } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalculatorForm, type ProductInfo } from "@/components/calculator/CalculatorForm";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 import { useCalculator } from "@/hooks/useCalculator";
@@ -109,22 +111,49 @@ export default function CalculatorPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            <CalculatorForm
-              productInfo={productInfo}
-              onInputChange={handleInputChange}
-              onCategoryChange={handleCategoryChange}
-              onCalculate={() => calculateResults(productInfo)}
-              onReset={resetForm}
-              onSaveProfile={saveProfile}
-            />
+            <Tabs defaultValue="fba" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="fba">FBA - Logística da Amazon</TabsTrigger>
+                <TabsTrigger value="fbm">FBM - Sua Logística</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="fba">
+                <Card>
+                  <CardContent className="p-6">
+                    <CalculatorForm
+                      mode="fba"
+                      productInfo={productInfo}
+                      onInputChange={handleInputChange}
+                      onCategoryChange={handleCategoryChange}
+                      onCalculate={() => calculateResults(productInfo)}
+                      onReset={resetForm}
+                      onSaveProfile={saveProfile}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="fbm">
+                <Card>
+                  <CardContent className="p-6">
+                    <CalculatorForm
+                      mode="fbm"
+                      productInfo={productInfo}
+                      onInputChange={handleInputChange}
+                      onCategoryChange={handleCategoryChange}
+                      onCalculate={() => calculateResults(productInfo)}
+                      onReset={resetForm}
+                      onSaveProfile={saveProfile}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
 
           <div className="lg:col-span-2">
             <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-lg font-medium">Resultados da Calculadora</CardTitle>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <CalculatorResults result={result} productInfo={productInfo} />
               </CardContent>
             </Card>

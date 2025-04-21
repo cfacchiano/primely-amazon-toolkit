@@ -1,14 +1,10 @@
 
-import { Calculator, Info } from "lucide-react";
+import { Calculator } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { amazonCategories } from "./calculator-data";
-import { FbaForm } from "./FbaForm";
-import { FbmForm } from "./FbmForm";
 
 export type ProductInfo = {
   asin: string;
@@ -26,6 +22,7 @@ export type ProductInfo = {
 };
 
 interface CalculatorFormProps {
+  mode: 'fba' | 'fbm';
   productInfo: ProductInfo;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCategoryChange: (value: string) => void;
@@ -35,105 +32,77 @@ interface CalculatorFormProps {
 }
 
 export function CalculatorForm({ 
+  mode,
   productInfo, 
   onInputChange, 
   onCategoryChange,
-  onCalculate,
-  onReset,
-  onSaveProfile 
+  onCalculate
 }: CalculatorFormProps) {
+  const isFBA = mode === 'fba';
+
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-medium">Informações do Produto</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="asin">ASIN (opcional)</Label>
-            <Input
-              id="asin"
-              name="asin"
-              placeholder="Ex: B09ABCDEF1"
-              value={productInfo.asin}
-              onChange={onInputChange}
-            />
-          </div>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="sellPrice">
+            Preço de Venda (R$) <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="sellPrice"
+            name="sellPrice"
+            placeholder="Ex: 99,90"
+            value={productInfo.sellPrice}
+            onChange={onInputChange}
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome do Produto (opcional)</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="Ex: Fone de Ouvido Bluetooth"
-              value={productInfo.name}
-              onChange={onInputChange}
-            />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="category">Categoria</Label>
+          <Select
+            value={productInfo.category}
+            onValueChange={onCategoryChange}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione a categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              {amazonCategories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="category">Categoria</Label>
-            <Select
-              value={productInfo.category}
-              onValueChange={onCategoryChange}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione a categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {amazonCategories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="cost">
+            Custo do Produto (R$) <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="cost"
+            name="cost"
+            placeholder="Ex: 45,00"
+            value={productInfo.cost}
+            onChange={onInputChange}
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="sellPrice">
-              Preço de Venda (R$) <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="sellPrice"
-              name="sellPrice"
-              placeholder="Ex: 99,90"
-              value={productInfo.sellPrice}
-              onChange={onInputChange}
-            />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="otherCosts">
+            Outros Custos (R$)
+          </Label>
+          <Input
+            id="otherCosts"
+            name="otherCosts"
+            placeholder="Ex: 5,00"
+            value={productInfo.otherCosts}
+            onChange={onInputChange}
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="cost">
-              Custo do Produto (R$) <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="cost"
-              name="cost"
-              placeholder="Ex: 45,00"
-              value={productInfo.cost}
-              onChange={onInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="otherCosts">
-              Outros Custos (R$)
-            </Label>
-            <Input
-              id="otherCosts"
-              name="otherCosts"
-              placeholder="Ex: 5,00"
-              value={productInfo.otherCosts}
-              onChange={onInputChange}
-            />
-          </div>
-
-          <div className="pt-4 border-t">
-            <p className="text-sm font-medium mb-2 flex items-center">
-              <Info size={14} className="mr-1 text-muted-foreground" />
-              Dimensões do Produto
-            </p>
+        {isFBA && (
+          <>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="weight">Peso (g)</Label>
@@ -176,28 +145,41 @@ export function CalculatorForm({
                 />
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fbaStorageFee">
+                Taxa de Armazenamento FBA (R$)
+              </Label>
+              <Input
+                id="fbaStorageFee"
+                name="fbaStorageFee"
+                placeholder="Ex: 0,34"
+                value={productInfo.fbaStorageFee}
+                onChange={onInputChange}
+              />
+            </div>
+          </>
+        )}
+
+        {!isFBA && (
+          <div className="space-y-2">
+            <Label htmlFor="fbmShippingCost">
+              Custo de Envio FBM (R$)
+            </Label>
+            <Input
+              id="fbmShippingCost"
+              name="fbmShippingCost"
+              placeholder="Ex: 12,00"
+              value={productInfo.fbmShippingCost}
+              onChange={onInputChange}
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="fba" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="fba">FBA - Logística da Amazon</TabsTrigger>
-          <TabsTrigger value="fbm">FBM - Sua Logística</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="fba">
-          <FbaForm productInfo={productInfo} onInputChange={onInputChange} />
-        </TabsContent>
-        
-        <TabsContent value="fbm">
-          <FbmForm productInfo={productInfo} onInputChange={onInputChange} />
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
 
       <Button className="w-full" onClick={onCalculate}>
         <Calculator size={16} className="mr-2" />
-        Calcular Resultados
+        Calcular {isFBA ? 'FBA' : 'FBM'}
       </Button>
     </div>
   );
