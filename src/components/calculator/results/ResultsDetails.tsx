@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CalculationResult } from "../calculator-data";
 import type { ProductInfo } from "../CalculatorForm";
@@ -19,6 +20,10 @@ export function ResultsDetails({ result, productInfo }: ResultsDetailsProps) {
     productInfo.width && 
     productInfo.height && 
     result.productDimensions?.volumeInCubicMeters;
+    
+  const otherCostsValue = productInfo.otherCosts 
+    ? Number(productInfo.otherCosts.toString().replace(",", ".")) 
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -82,10 +87,10 @@ export function ResultsDetails({ result, productInfo }: ResultsDetailsProps) {
                 <span className="text-muted-foreground">Taxa de Logística FBA</span>
                 <span>R$ {formatNumber(result.fbaLogisticsFee)}</span>
               </div>
-              {otherCosts > 0 && (
+              {otherCostsValue > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Outros Custos</span>
-                  <span>R$ {formatNumber(otherCosts)}</span>
+                  <span>R$ {formatNumber(otherCostsValue)}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm border-t pt-2">

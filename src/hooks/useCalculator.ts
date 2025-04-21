@@ -46,15 +46,23 @@ export const useCalculator = () => {
     
     // Calcula taxas FBA
     const fbaReferralFee = sellPrice * referralFee;
-    const fbaStorageFee = volumeInCubicMeters * storageFeePerCubicMeter; // Taxa de armazenamento mensal
-    const fbaLogisticsFee = getFbaLogisticsFee(weightInKg); // Taxa de logística baseada no peso
+    
+    // Taxa de armazenamento baseada no volume
+    // Se o usuário informou um valor manual de taxa de armazenamento, use esse valor
+    const fbaStorageFee = productInfo.fbaStorageFee && productInfo.fbaStorageFee !== "" 
+      ? Number(productInfo.fbaStorageFee.toString().replace(",", ".")) 
+      : volumeInCubicMeters * storageFeePerCubicMeter;
+    
+    // Taxa de logística baseada no peso
+    const fbaLogisticsFee = getFbaLogisticsFee(weightInKg);
+    
     const fbaTotalFees = fbaReferralFee + fbaStorageFee + fbaLogisticsFee;
     const fbaTotalCost = cost + otherCosts + fbaTotalFees;
     const fbaProfit = sellPrice - fbaTotalCost;
     const fbaMargin = (fbaProfit / sellPrice) * 100;
     const fbaRoi = (fbaProfit / cost) * 100;
 
-    // Calcula taxas FBM (mantém o mesmo cálculo)
+    // Calcula taxas FBM
     const fbmReferralFee = sellPrice * referralFee;
     const fbmShippingCost = productInfo.fbmShippingCost ? Number(productInfo.fbmShippingCost.toString().replace(",", ".")) : 12.0;
     const fbmTotalCost = cost + otherCosts + fbmReferralFee + fbmShippingCost;
@@ -75,8 +83,8 @@ export const useCalculator = () => {
       fbmMargin,
       fbaRoi,
       fbmRoi,
-      fbaStorageFee, // Nova propriedade
-      fbaLogisticsFee, // Nova propriedade
+      fbaStorageFee,
+      fbaLogisticsFee,
       productDimensions: {
         length,
         width,
