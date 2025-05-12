@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -14,7 +13,8 @@ import {
   Search, 
   Settings, 
   ShoppingCart, 
-  UserCircle 
+  UserCircle,
+  PackageOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -109,6 +109,13 @@ export default function Sidebar() {
             label="Calculadora FBA/FBM"
             collapsed={collapsed}
             active={isActive("/calculator")}
+          />
+          <SidebarLink
+            to="/mining"
+            icon={PackageOpen}
+            label="Mineração de Produtos"
+            collapsed={collapsed}
+            active={isActive("/mining")}
           />
           <SidebarLink
             to="/products"
