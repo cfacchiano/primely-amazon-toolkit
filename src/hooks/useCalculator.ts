@@ -10,7 +10,7 @@ export const useCalculator = () => {
   const { toast } = useToast();
   const [result, setResult] = useState<CalculationResult | null>(null);
   
-  const calculateResults = (productInfo: ProductInfo) => {
+  const calculateResults = (productInfo: ProductInfo, mode: 'fba' | 'fbm') => {
     if (
       productInfo.sellPrice === "" ||
       productInfo.cost === ""

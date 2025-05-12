@@ -9,9 +9,10 @@ import { ResultsDetails } from "./results/ResultsDetails";
 interface CalculatorResultsProps {
   result: CalculationResult | null;
   productInfo: ProductInfo;
+  calculationMode: 'fba' | 'fbm';
 }
 
-export function CalculatorResults({ result, productInfo }: CalculatorResultsProps) {
+export function CalculatorResults({ result, productInfo, calculationMode }: CalculatorResultsProps) {
   if (!result) {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-center">
