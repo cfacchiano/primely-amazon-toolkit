@@ -90,6 +90,14 @@ export default function CalculatorPage() {
       description: "Salvamento de perfis estará disponível no plano Pro.",
     });
   };
+  
+  const [calculationMode, setCalculationMode] = useState<"fba" | "fbm">("fba");
+  
+  const handleCalculationModeChange = (mode: string) => {
+    setCalculationMode(mode as "fba" | "fbm");
+    // Reset results when switching modes
+    setResult(null);
+  };
 
   return (
     <MainLayout>
@@ -111,13 +119,18 @@ export default function CalculatorPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            <Tabs defaultValue="fba" className="w-full">
+            <Tabs 
+              defaultValue={calculationMode}
+              value={calculationMode}
+              onValueChange={handleCalculationModeChange}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="fba">FBA - Logística da Amazon</TabsTrigger>
                 <TabsTrigger value="fbm">FBM - Sua Logística</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="fba">
+              <TabsContent value="fba" className="space-y-4">
                 <Card>
                   <CardContent className="p-6">
                     <CalculatorForm
@@ -125,7 +138,7 @@ export default function CalculatorPage() {
                       productInfo={productInfo}
                       onInputChange={handleInputChange}
                       onCategoryChange={handleCategoryChange}
-                      onCalculate={() => calculateResults(productInfo)}
+                      onCalculate={() => calculateResults(productInfo, "fba")}
                       onReset={resetForm}
                       onSaveProfile={saveProfile}
                     />
@@ -133,7 +146,7 @@ export default function CalculatorPage() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="fbm">
+              <TabsContent value="fbm" className="space-y-4">
                 <Card>
                   <CardContent className="p-6">
                     <CalculatorForm
@@ -141,7 +154,7 @@ export default function CalculatorPage() {
                       productInfo={productInfo}
                       onInputChange={handleInputChange}
                       onCategoryChange={handleCategoryChange}
-                      onCalculate={() => calculateResults(productInfo)}
+                      onCalculate={() => calculateResults(productInfo, "fbm")}
                       onReset={resetForm}
                       onSaveProfile={saveProfile}
                     />
@@ -154,7 +167,7 @@ export default function CalculatorPage() {
           <div className="lg:col-span-2">
             <Card className="h-full">
               <CardContent className="p-6">
-                <CalculatorResults result={result} productInfo={productInfo} />
+                <CalculatorResults result={result} productInfo={productInfo} calculationMode={calculationMode} />
               </CardContent>
             </Card>
           </div>

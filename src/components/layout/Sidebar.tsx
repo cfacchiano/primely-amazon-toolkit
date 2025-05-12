@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { 
   BarChart2, 
   Calculator, 
@@ -63,6 +63,11 @@ const SidebarGroup = ({ title, children, collapsed }: SidebarGroupProps) => {
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <div 
@@ -96,31 +101,35 @@ export default function Sidebar() {
             icon={LayoutDashboard}
             label="Dashboard"
             collapsed={collapsed}
-            active={true}
+            active={isActive("/")}
           />
           <SidebarLink
             to="/calculator"
             icon={Calculator}
             label="Calculadora FBA/FBM"
             collapsed={collapsed}
-          />
-          <SidebarLink
-            to="/competition"
-            icon={Search}
-            label="Análise de Concorrência"
-            collapsed={collapsed}
+            active={isActive("/calculator")}
           />
           <SidebarLink
             to="/products"
             icon={Package}
             label="Gestão de Produtos"
             collapsed={collapsed}
+            active={isActive("/products")}
+          />
+          <SidebarLink
+            to="/competition"
+            icon={Search}
+            label="Análise de Concorrência"
+            collapsed={collapsed}
+            active={isActive("/competition")}
           />
           <SidebarLink
             to="/buybox"
             icon={ShoppingCart}
             label="Monitoramento BuyBox"
             collapsed={collapsed}
+            active={isActive("/buybox")}
           />
         </SidebarGroup>
 
@@ -130,12 +139,14 @@ export default function Sidebar() {
             icon={BarChart2}
             label="Relatórios"
             collapsed={collapsed}
+            active={isActive("/analytics")}
           />
           <SidebarLink
             to="/profits"
             icon={DollarSign}
             label="Lucros e Margens"
             collapsed={collapsed}
+            active={isActive("/profits")}
           />
         </SidebarGroup>
 
@@ -145,12 +156,14 @@ export default function Sidebar() {
             icon={Settings}
             label="Configurações"
             collapsed={collapsed}
+            active={isActive("/settings")}
           />
           <SidebarLink
             to="/profile"
             icon={UserCircle}
             label="Perfil"
             collapsed={collapsed}
+            active={isActive("/profile")}
           />
         </SidebarGroup>
       </div>
