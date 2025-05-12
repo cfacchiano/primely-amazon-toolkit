@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { ProductResult } from "@/pages/ProductMining";
-import { Edit, Filter } from "lucide-react";
+import { Edit, Filter, Eye, ArrowUp, ArrowDown } from "lucide-react";
 
 interface ProductListProps {
   products: ProductResult[];
@@ -15,13 +15,33 @@ interface ProductListProps {
 export function ProductList({ products, onEditProduct }: ProductListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("roiPercentage");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  // Get unique categories for the filter dropdown
+  const categories = Array.from(new Set(products.map(p => p.category)));
+
+  // Toggle sort direction
+  const toggleSortDirection = (field: string) => {
+    if (sortBy === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortDirection("desc");
+    }
+  };
 
   // Filter and sort products
   const filteredProducts = products
     .filter(product => {
       // Apply status filter
       if (statusFilter !== "all" && product.status !== statusFilter) {
+        return false;
+      }
+      
+      // Apply category filter
+      if (categoryFilter !== "all" && product.category !== categoryFilter) {
         return false;
       }
       
@@ -40,17 +60,21 @@ export function ProductList({ products, onEditProduct }: ProductListProps) {
     })
     .sort((a, b) => {
       // Apply sorting
+      const direction = sortDirection === "asc" ? 1 : -1;
+      
       switch (sortBy) {
         case "roiPercentage":
-          return b.roiPercentage - a.roiPercentage;
+          return (a.roiPercentage - b.roiPercentage) * direction;
         case "marginPercentage":
-          return b.marginPercentage - a.marginPercentage;
+          return (a.marginPercentage - b.marginPercentage) * direction;
         case "netProfit":
-          return b.netProfit - a.netProfit;
+          return (a.netProfit - b.netProfit) * direction;
+        case "totalUnitCost":
+          return (a.totalUnitCost - b.totalUnitCost) * direction;
         case "name":
-          return a.name.localeCompare(b.name);
+          return a.name.localeCompare(b.name) * direction;
         case "date":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * direction;
         default:
           return 0;
       }
@@ -80,7 +104,21 @@ export function ProductList({ products, onEditProduct }: ProductListProps) {
           />
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as Categorias</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="Status" />
@@ -99,11 +137,11 @@ export function ProductList({ products, onEditProduct }: ProductListProps) {
               <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="roiPercentage">Maior ROI</SelectItem>
-              <SelectItem value="marginPercentage">Maior Margem</SelectItem>
-              <SelectItem value="netProfit">Maior Lucro</SelectItem>
+              <SelectItem value="roiPercentage">ROI</SelectItem>
+              <SelectItem value="marginPercentage">Margem</SelectItem>
+              <SelectItem value="totalUnitCost">Custo Total</SelectItem>
               <SelectItem value="name">Nome</SelectItem>
-              <SelectItem value="date">Mais recente</SelectItem>
+              <SelectItem value="date">Data</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -113,14 +151,37 @@ export function ProductList({ products, onEditProduct }: ProductListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Produto</TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/70"
+                onClick={() => toggleSortDirection("name")}
+              >
+                Nome do Produto
+                {sortBy === "name" && (
+                  sortDirection === "asc" ? <ArrowUp size={14} className="inline ml-1" /> : <ArrowDown size={14} className="inline ml-1" />
+                )}
+              </TableHead>
               <TableHead>Fornecedor</TableHead>
+              <TableHead>Categoria</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Custo Total</TableHead>
+              <TableHead 
+                className="text-right cursor-pointer hover:bg-muted/70"
+                onClick={() => toggleSortDirection("totalUnitCost")}
+              >
+                Custo Total
+                {sortBy === "totalUnitCost" && (
+                  sortDirection === "asc" ? <ArrowUp size={14} className="inline ml-1" /> : <ArrowDown size={14} className="inline ml-1" />
+                )}
+              </TableHead>
               <TableHead className="text-right">Preço</TableHead>
-              <TableHead className="text-right">Lucro</TableHead>
-              <TableHead className="text-right">Margem</TableHead>
-              <TableHead className="text-right">ROI</TableHead>
+              <TableHead 
+                className="text-right cursor-pointer hover:bg-muted/70"
+                onClick={() => toggleSortDirection("roiPercentage")}
+              >
+                ROI %
+                {sortBy === "roiPercentage" && (
+                  sortDirection === "asc" ? <ArrowUp size={14} className="inline ml-1" /> : <ArrowDown size={14} className="inline ml-1" />
+                )}
+              </TableHead>
               <TableHead className="text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -138,6 +199,7 @@ export function ProductList({ products, onEditProduct }: ProductListProps) {
                   </div>
                 </TableCell>
                 <TableCell>{product.supplier}</TableCell>
+                <TableCell>{product.category}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
                     ${product.status === 'Em Estoque' ? 'bg-success/20 text-success' : 
@@ -149,20 +211,20 @@ export function ProductList({ products, onEditProduct }: ProductListProps) {
                 </TableCell>
                 <TableCell className="text-right">R$ {product.totalUnitCost.toFixed(2)}</TableCell>
                 <TableCell className="text-right">R$ {product.sellPrice.toFixed(2)}</TableCell>
-                <TableCell className={`text-right font-medium ${product.netProfit < 0 ? 'text-destructive' : 'text-success'}`}>
-                  R$ {product.netProfit.toFixed(2)}
-                </TableCell>
-                <TableCell className={`text-right ${product.marginPercentage < 0 ? 'text-destructive' : product.marginPercentage < 20 ? 'text-warning' : 'text-success'}`}>
-                  {product.marginPercentage.toFixed(1)}%
-                </TableCell>
                 <TableCell className={`text-right font-medium ${product.roiPercentage < 0 ? 'text-destructive' : product.roiPercentage < 50 ? 'text-warning' : 'text-success'}`}>
                   {product.roiPercentage.toFixed(1)}%
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button variant="ghost" size="sm" onClick={() => onEditProduct(product)}>
-                    <Edit size={14} className="mr-1" />
-                    Editar
-                  </Button>
+                  <div className="flex justify-center space-x-2">
+                    <Button variant="outline" size="sm" onClick={() => onEditProduct(product)}>
+                      <Eye size={14} className="mr-1" />
+                      Detalhes
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => onEditProduct(product)}>
+                      <Edit size={14} className="mr-1" />
+                      Editar
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
