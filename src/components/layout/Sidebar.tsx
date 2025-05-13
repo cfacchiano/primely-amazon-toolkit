@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -14,7 +15,8 @@ import {
   Settings, 
   ShoppingCart, 
   UserCircle,
-  PackageOpen
+  PackageOpen,
+  Truck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -123,6 +125,13 @@ export default function Sidebar() {
             label="Gestão de Produtos"
             collapsed={collapsed}
             active={isActive("/products")}
+          />
+          <SidebarLink
+            to="/suppliers"
+            icon={Truck}
+            label="Fornecedores e Prep Centers"
+            collapsed={collapsed}
+            active={isActive("/suppliers")}
           />
           <SidebarLink
             to="/competition"
