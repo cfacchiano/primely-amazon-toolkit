@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -11,6 +10,23 @@ import { ProductList } from "@/components/mining/ProductList";
 export interface ProductBase {
   id?: string;
   name: string;
+  manufacturer: string;
+  brand: string;
+  model: string;
+  upcCode: string;
+  dimensions: {
+    width: string;
+    height: string;
+    length: string;
+  };
+  weight: string;
+  characteristics: string;
+  variations: {
+    type: 'color' | 'color-size' | 'size-name' | 'size-color-name';
+    colorOptions?: string;
+    sizeOptions?: string;
+  };
+  price: string;
   sku: string;
   asin: string;
   supplier: string;
