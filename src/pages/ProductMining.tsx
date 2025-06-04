@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -86,7 +87,7 @@ export default function ProductMining() {
       setSimulatedProducts([newProduct, ...simulatedProducts]);
     }
     
-    setActiveTab("list");
+    setActiveTab("minerados");
   };
 
   const handleEditProduct = (product: ProductResult) => {
@@ -106,7 +107,7 @@ export default function ProductMining() {
           <TabsList className="grid w-full grid-cols-3 md:w-auto">
             <TabsTrigger value="register">Cadastro Rápido</TabsTrigger>
             <TabsTrigger value="simulate">Simulação</TabsTrigger>
-            <TabsTrigger value="list">Lista de Produtos</TabsTrigger>
+            <TabsTrigger value="minerados">Produtos Minerados</TabsTrigger>
           </TabsList>
 
           <TabsContent value="register">
@@ -135,10 +136,10 @@ export default function ProductMining() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="list">
+          <TabsContent value="minerados">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg font-medium">Lista de Produtos Simulados</CardTitle>
+                <CardTitle className="text-lg font-medium">Produtos Minerados</CardTitle>
               </CardHeader>
               <CardContent>
                 <ProductList 
