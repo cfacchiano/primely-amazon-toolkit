@@ -55,7 +55,7 @@ export interface ProductResult extends ProductSimulationData {
   createdAt: Date;
 }
 
-// Sample mined products data - same as in Products.tsx
+// Sample mined products data with additional fields
 const minedProducts = [
   {
     id: "m1",
@@ -67,6 +67,8 @@ const minedProducts = [
     sellPrice: 45.9,
     roi: 85.2,
     margin: 52.1,
+    taxes: 6.8,
+    shipping: 8.5,
   },
   {
     id: "m2",
@@ -78,6 +80,21 @@ const minedProducts = [
     sellPrice: 29.9,
     roi: 78.4,
     margin: 58.3,
+    taxes: 4.2,
+    shipping: 5.8,
+  },
+  {
+    id: "m3",
+    name: "Organizador de Mesa Bambu",
+    asin: "B12DEF7890",
+    category: "Casa",
+    status: "Comprado",
+    cost: 22.5,
+    sellPrice: 59.9,
+    roi: 65.8,
+    margin: 45.2,
+    taxes: 8.5,
+    shipping: 12.2,
   },
 ];
 
@@ -146,6 +163,8 @@ export default function ProductMining() {
                         <TableHead>Status</TableHead>
                         <TableHead className="text-right">Custo</TableHead>
                         <TableHead className="text-right">Preço</TableHead>
+                        <TableHead className="text-right">Imposto</TableHead>
+                        <TableHead className="text-right">Frete</TableHead>
                         <TableHead className="text-right">ROI %</TableHead>
                         <TableHead className="text-right">Margem %</TableHead>
                         <TableHead className="text-center">Ações</TableHead>
@@ -168,6 +187,8 @@ export default function ProductMining() {
                           </TableCell>
                           <TableCell className="text-right">R$ {product.cost.toFixed(2)}</TableCell>
                           <TableCell className="text-right">R$ {product.sellPrice.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">R$ {product.taxes.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">R$ {product.shipping.toFixed(2)}</TableCell>
                           <TableCell className="text-right font-medium text-success">
                             {product.roi.toFixed(1)}%
                           </TableCell>
