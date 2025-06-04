@@ -1,12 +1,13 @@
-
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuickProductForm } from "@/components/mining/QuickProductForm";
-import { ProductSimulation } from "@/components/mining/ProductSimulation";
 import { ProductList } from "@/components/mining/ProductList";
+import { Button } from "@/components/ui/button";
+import { Filter, Eye, Edit } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export interface ProductBase {
   id?: string;
@@ -54,45 +55,49 @@ export interface ProductResult extends ProductSimulationData {
   createdAt: Date;
 }
 
+// Sample mined products data - same as in Products.tsx
+const minedProducts = [
+  {
+    id: "m1",
+    name: "Suporte para Celular Ajustável",
+    asin: "B10XYZ9876",
+    category: "Acessórios",
+    status: "Simulado",
+    cost: 15.2,
+    sellPrice: 45.9,
+    roi: 85.2,
+    margin: 52.1,
+  },
+  {
+    id: "m2",
+    name: "Cabo USB-C Reforçado",
+    asin: "B11ABC5432",
+    category: "Eletrônicos",
+    status: "Em Cotação",
+    cost: 8.9,
+    sellPrice: 29.9,
+    roi: 78.4,
+    margin: 58.3,
+  },
+];
+
 export default function ProductMining() {
   const [activeTab, setActiveTab] = useState("register");
-  const [selectedProduct, setSelectedProduct] = useState<ProductBase | null>(null);
   const [simulatedProducts, setSimulatedProducts] = useState<ProductResult[]>([]);
 
   const handleProductRegistered = (product: ProductBase) => {
-    setSelectedProduct(product);
-    setActiveTab("simulate");
-  };
-
-  const handleProductSaved = (product: ProductResult) => {
-    // Check if product already exists in the list
-    const existingIndex = simulatedProducts.findIndex(p => 
-      (p.id && p.id === product.id) || 
-      (p.asin && p.asin === product.asin) || 
-      (p.sku && p.sku === product.sku)
-    );
-
-    if (existingIndex >= 0) {
-      // Update existing product
-      const updatedProducts = [...simulatedProducts];
-      updatedProducts[existingIndex] = product;
-      setSimulatedProducts(updatedProducts);
-    } else {
-      // Add new product with generated ID if not present
-      const newProduct = {
-        ...product,
-        id: product.id || `prod-${Date.now()}`,
-        createdAt: new Date()
-      };
-      setSimulatedProducts([newProduct, ...simulatedProducts]);
-    }
-    
+    // Just switch to the products list tab after registration
     setActiveTab("minerados");
   };
 
-  const handleEditProduct = (product: ProductResult) => {
-    setSelectedProduct(product);
-    setActiveTab("simulate");
+  const handleEditProduct = (product: any) => {
+    // Handle edit functionality if needed
+    console.log("Editing product:", product);
+  };
+
+  const handleViewDetails = (product: any) => {
+    // Handle view details functionality if needed
+    console.log("Viewing product details:", product);
   };
 
   return (
@@ -104,9 +109,8 @@ export default function ProductMining() {
         />
 
         <Tabs defaultValue="register" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 md:w-auto">
+          <TabsList className="grid w-full grid-cols-2 md:w-auto">
             <TabsTrigger value="register">Cadastro Rápido</TabsTrigger>
-            <TabsTrigger value="simulate">Simulação</TabsTrigger>
             <TabsTrigger value="minerados">Produtos Minerados</TabsTrigger>
           </TabsList>
 
@@ -121,31 +125,72 @@ export default function ProductMining() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="simulate">
+          <TabsContent value="minerados" className="space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium">Simulação de Produto</CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg font-medium">Produtos Minerados</CardTitle>
+                  <Button variant="outline" size="sm">
+                    <Filter size={14} className="mr-1" /> Filtrar
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <ProductSimulation 
-                  product={selectedProduct} 
-                  onProductSaved={handleProductSaved} 
-                  onCancel={() => setActiveTab("register")} 
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="minerados">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium">Produtos Minerados</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ProductList 
-                  products={simulatedProducts} 
-                  onEditProduct={handleEditProduct} 
-                />
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Produto</TableHead>
+                        <TableHead>ASIN</TableHead>
+                        <TableHead>Categoria</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Custo</TableHead>
+                        <TableHead className="text-right">Preço</TableHead>
+                        <TableHead className="text-right">ROI %</TableHead>
+                        <TableHead className="text-right">Margem %</TableHead>
+                        <TableHead className="text-center">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {minedProducts.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>{product.asin}</TableCell>
+                          <TableCell>{product.category}</TableCell>
+                          <TableCell>
+                            <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
+                              ${product.status === 'Em Estoque' ? 'bg-success/20 text-success' : 
+                                product.status === 'Comprado' ? 'bg-warning/20 text-warning' : 
+                                product.status === 'Em Cotação' ? 'bg-primary/20 text-primary' :
+                                'bg-muted/80 text-muted-foreground'}`}>
+                              {product.status}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">R$ {product.cost.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">R$ {product.sellPrice.toFixed(2)}</TableCell>
+                          <TableCell className="text-right font-medium text-success">
+                            {product.roi.toFixed(1)}%
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {product.margin.toFixed(1)}%
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex justify-center space-x-2">
+                              <Button variant="outline" size="sm" onClick={() => handleViewDetails(product)}>
+                                <Eye size={14} className="mr-1" />
+                                Detalhes
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => handleEditProduct(product)}>
+                                <Edit size={14} className="mr-1" />
+                                Editar
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
