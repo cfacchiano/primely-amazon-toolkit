@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -63,33 +62,8 @@ const sampleProducts = [
   },
 ];
 
-const minedProducts = [
-  {
-    id: "m1",
-    name: "Suporte para Celular Ajustável",
-    asin: "B10XYZ9876",
-    category: "Acessórios",
-    status: "Simulado",
-    cost: 15.2,
-    sellPrice: 45.9,
-    roi: 85.2,
-    margin: 52.1,
-  },
-  {
-    id: "m2",
-    name: "Cabo USB-C Reforçado",
-    asin: "B11ABC5432",
-    category: "Eletrônicos",
-    status: "Em Cotação",
-    cost: 8.9,
-    sellPrice: 29.9,
-    roi: 78.4,
-    margin: 58.3,
-  },
-];
-
 export default function Products() {
-  const [activeTab, setActiveTab] = useState("minerados");
+  const [activeTab, setActiveTab] = useState("venda");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
@@ -103,7 +77,7 @@ export default function Products() {
       <div className="space-y-8">
         <SectionHeader
           title="Gestão de Produtos"
-          description="Controle completo dos seus produtos minerados e em venda na Amazon."
+          description="Controle completo dos seus produtos em venda na Amazon."
           action={
             <div className="flex gap-2">
               <Button size="sm" onClick={() => {}}>
@@ -116,83 +90,12 @@ export default function Products() {
           }
         />
 
-        <Tabs defaultValue="minerados" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 md:w-auto">
-            <TabsTrigger value="minerados">Produtos Minerados</TabsTrigger>
+        <Tabs defaultValue="venda" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 md:w-auto">
             <TabsTrigger value="venda">Produtos à Venda</TabsTrigger>
             <TabsTrigger value="estoque">Em Estoque</TabsTrigger>
             <TabsTrigger value="vendas">Vendas</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="minerados" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-medium">Produtos Minerados</CardTitle>
-                  <Button variant="outline" size="sm">
-                    <Filter size={14} className="mr-1" /> Filtrar
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Produto</TableHead>
-                        <TableHead>ASIN</TableHead>
-                        <TableHead>Categoria</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Custo</TableHead>
-                        <TableHead className="text-right">Preço</TableHead>
-                        <TableHead className="text-right">ROI %</TableHead>
-                        <TableHead className="text-right">Margem %</TableHead>
-                        <TableHead className="text-center">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {minedProducts.map((product) => (
-                        <TableRow key={product.id}>
-                          <TableCell className="font-medium">{product.name}</TableCell>
-                          <TableCell>{product.asin}</TableCell>
-                          <TableCell>{product.category}</TableCell>
-                          <TableCell>
-                            <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
-                              ${product.status === 'Em Estoque' ? 'bg-success/20 text-success' : 
-                                product.status === 'Comprado' ? 'bg-warning/20 text-warning' : 
-                                product.status === 'Em Cotação' ? 'bg-primary/20 text-primary' :
-                                'bg-muted/80 text-muted-foreground'}`}>
-                              {product.status}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">R$ {product.cost.toFixed(2)}</TableCell>
-                          <TableCell className="text-right">R$ {product.sellPrice.toFixed(2)}</TableCell>
-                          <TableCell className="text-right font-medium text-success">
-                            {product.roi.toFixed(1)}%
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {product.margin.toFixed(1)}%
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <div className="flex justify-center space-x-2">
-                              <Button variant="outline" size="sm" onClick={() => handleViewDetails(product)}>
-                                <Eye size={14} className="mr-1" />
-                                Detalhes
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Edit size={14} className="mr-1" />
-                                Editar
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="venda" className="space-y-4">
             <Card>
@@ -244,6 +147,7 @@ export default function Products() {
                           </TableCell>
                           <TableCell className="text-center">
                             <Button variant="outline" size="sm" onClick={() => handleViewDetails(product)}>
+                              <Eye size={14} className="mr-1" />
                               Detalhes
                             </Button>
                           </TableCell>
